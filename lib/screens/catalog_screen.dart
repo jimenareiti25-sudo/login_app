@@ -5,25 +5,31 @@ import '../services/api_service.dart';
 import 'product_detail_screen.dart';
 import 'dashboard_screen.dart';
 
+
 class CatalogScreen extends StatefulWidget {
   final UserModel user;
 
+
   const CatalogScreen({super.key, required this.user});
+
 
   @override
   State<CatalogScreen> createState() => _CatalogScreenState();
 }
+
 
 class _CatalogScreenState extends State<CatalogScreen> {
   late Future<List<ProductModel>> _futureProducts;
   late Future<List<String>> _futureCategories;
   String? _selectedCategory;
 
+
   @override
   void initState() {
     super.initState();
     _loadData();
   }
+
 
   void _loadData() {
     setState(() {
@@ -33,6 +39,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
     });
   }
 
+
   void _filterByCategory(String category) {
     setState(() {
       _selectedCategory = category;
@@ -40,6 +47,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       _futureProducts = ApiService.getProductsByCategory(category);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +142,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   );
                 }
 
+
                 final products = snapshot.data!;
                 return ListView.builder(
                   itemCount: products.length,
@@ -189,8 +198,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
   }
 }
 
+
 class CircularIndicatorWidget extends StatelessWidget {
   const CircularIndicatorWidget({super.key});
+
 
   @override
   Widget build(BuildContext context) {

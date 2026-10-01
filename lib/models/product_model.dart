@@ -6,6 +6,7 @@ class ProductModel {
   final String category;
   final String image;
 
+
   ProductModel({
     required this.id,
     required this.title,
@@ -14,6 +15,7 @@ class ProductModel {
     required this.category,
     required this.image,
   });
+
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(

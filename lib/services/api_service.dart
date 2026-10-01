@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -85,6 +84,46 @@ class ApiService {
       return null;
     } catch (e) {
       return null;
+    }
+  }
+
+  // --- US06: CREAR PRODUCTO (POST) ---
+  static Future<bool> createProduct(Map<String, dynamic> productData) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/products'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(productData),
+      );
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // --- US07: ACTUALIZAR PRODUCTO (PUT) ---
+  static Future<bool> updateProduct(int id, Map<String, dynamic> productData) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$_baseUrl/products/$id'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(productData),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // --- US08: ELIMINAR PRODUCTO (DELETE) ---
+  static Future<bool> deleteProduct(int id) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/products/$id'),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
     }
   }
 }

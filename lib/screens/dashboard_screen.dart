@@ -1,17 +1,20 @@
-
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import 'login_screen.dart';
 
+
 class DashboardScreen extends StatelessWidget {
   final UserModel user;
 
+
   const DashboardScreen({super.key, required this.user});
+
 
   @override
   Widget build(BuildContext context) {
     final List<Color> gradientColors;
     final Color primaryColor;
+
 
     switch (user.role) {
       case 'Administrador':
@@ -23,6 +26,7 @@ class DashboardScreen extends StatelessWidget {
         primaryColor = const Color(0xFFAB47BC);
         break;
 
+
       case 'Auditor':
         gradientColors = const [
           Color(0xFFE1F5FE),
@@ -31,6 +35,7 @@ class DashboardScreen extends StatelessWidget {
         ];
         primaryColor = const Color(0xFF29B6F6);
         break;
+
 
       default:
         gradientColors = const [
@@ -41,6 +46,7 @@ class DashboardScreen extends StatelessWidget {
         primaryColor = const Color(0xFFEC407A);
         break;
     }
+
 
     return Scaffold(
       body: Container(
@@ -144,6 +150,7 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildInfoTile(IconData icon, String title, String value, Color iconColor) {
     return Padding(

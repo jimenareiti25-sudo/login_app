@@ -1,17 +1,19 @@
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:login_app/screens/catalog_screen.dart';
 import '../services/api_service.dart';
 import '../models/user_model.dart';
 import 'dashboard_screen.dart';
-import 'catalog_screen.dart'; // <-- Añade esta línea arriba con tus otras importaciones
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
+
 
 class _LoginScreenState extends State<LoginScreen> {
   final _userController = TextEditingController();
@@ -19,17 +21,21 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
 
+
   final Color primaryColor = const Color(0xFF536DFE);
   final Color primaryLight = const Color(0xFF8C9EFF);
+
 
   Future<void> _login() async {
     final user = _userController.text.trim();
     final pass = _passController.text.trim();
 
+
     if (user.isEmpty || pass.isEmpty) {
       _showSnackBar('Por favor, ingresa usuario y contraseña.', Colors.orangeAccent);
       return;
     }
+
 
     final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult.contains(ConnectivityResult.none)) {
@@ -37,11 +43,15 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+
     setState(() => _isLoading = true);
+
 
     AuthResult result = await ApiService.authenticateUser(user, pass);
 
+
     setState(() => _isLoading = false);
+
 
     if (result.user != null && mounted) {
       Navigator.pushReplacement(
@@ -54,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _showSnackBar(result.errorMessage!, Colors.redAccent);
     }
   }
+
 
   void _showSnackBar(String message, Color backgroundColor) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -71,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
 
   Widget _buildTextField({
     required TextEditingController controller,

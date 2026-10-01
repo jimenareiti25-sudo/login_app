@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/product_model.dart';
 import '../services/api_service.dart';
+import 'product_form_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final int productId;
@@ -107,7 +108,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
                 const SizedBox(height: 30),
 
-                // US05 REGLA DE ROLES: Exclusión absoluta del árbol visual (Sin ocultar con opacidad, se omiten si no es Admin)
+                // US05/US07/US08 REGLA DE ROLES: Exclusión absoluta del árbol visual si no es Admin
                 if (isAdmin) ...[
                   const Divider(),
                   const Text('Panel de Administración', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.purple)),
@@ -116,10 +117,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Acción de Editar simulada')),
+                          onPressed: () async {
+                            // US07: Navegar a la pantalla de edición
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductFormScreen(product: product),
+                              ),
                             );
+                            if (result == true && mounted) {
+                              setState(() {
+                                _futureProduct = ApiService.getProductById(widget.productId);
+                              });
+                            }
                           },
                           icon: const Icon(Icons.edit, color: Colors.white),
                           label: const Text('Editar', style: TextStyle(color: Colors.white)),
@@ -129,10 +139,40 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       const SizedBox(width: 15),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Acción de Eliminar simulada')),
+                          onPressed: () async {
+                            // US08: Diálogo de confirmación para eliminar
+                            bool? confirm = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Confirmar Eliminación'),
+                                content: const Text('¿Estás seguro de que deseas eliminar este producto?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: const Text('Cancelar'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, true),
+                                    child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              ),
                             );
+
+                            if (confirm == true) {
+                              bool success = await ApiService.deleteProduct(product.id);
+                              if (!mounted) return;
+                              if (success) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Producto eliminado correctamente')),
+                                );
+                                Navigator.pop(context); // Regresa al catálogo
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Error al eliminar el producto', style: TextStyle(color: Colors.white))),
+                                );
+                              }
+                            }
                           },
                           icon: const Icon(Icons.delete, color: Colors.white),
                           label: const Text('Eliminar', style: TextStyle(color: Colors.white)),
