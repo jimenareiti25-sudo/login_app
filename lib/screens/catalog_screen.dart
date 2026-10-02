@@ -4,32 +4,27 @@ import '../models/product_model.dart';
 import '../services/api_service.dart';
 import 'product_detail_screen.dart';
 import 'dashboard_screen.dart';
-
+import 'product_form_screen.dart'; // <--- Importado para US06 (Crear producto)
 
 class CatalogScreen extends StatefulWidget {
   final UserModel user;
 
-
   const CatalogScreen({super.key, required this.user});
-
 
   @override
   State<CatalogScreen> createState() => _CatalogScreenState();
 }
-
 
 class _CatalogScreenState extends State<CatalogScreen> {
   late Future<List<ProductModel>> _futureProducts;
   late Future<List<String>> _futureCategories;
   String? _selectedCategory;
 
-
   @override
   void initState() {
     super.initState();
     _loadData();
   }
-
 
   void _loadData() {
     setState(() {
@@ -39,7 +34,6 @@ class _CatalogScreenState extends State<CatalogScreen> {
     });
   }
 
-
   void _filterByCategory(String category) {
     setState(() {
       _selectedCategory = category;
@@ -48,9 +42,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
+    // Verificación de rol para exclusión visual del botón flotante
+    bool isAdmin = widget.user.role == 'Administrador';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Catálogo de Productos'),
@@ -142,7 +138,6 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   );
                 }
 
-
                 final products = snapshot.data!;
                 return ListView.builder(
                   itemCount: products.length,
@@ -194,14 +189,29 @@ class _CatalogScreenState extends State<CatalogScreen> {
           ),
         ],
       ),
+      // US06: Botón flotante para agregar producto (Visible únicamente para Administradores)
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+              backgroundColor: const Color(0xFF536DFE),
+              child: const Icon(Icons.add, color: Colors.white),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProductFormScreen()),
+                );
+                // Si el producto se registró con éxito en la API, recargamos el catálogo
+                if (result == true) {
+                  _loadData();
+                }
+              },
+            )
+          : null,
     );
   }
 }
 
-
 class CircularIndicatorWidget extends StatelessWidget {
   const CircularIndicatorWidget({super.key});
-
 
   @override
   Widget build(BuildContext context) {
